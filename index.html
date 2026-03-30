@@ -264,6 +264,18 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div id="hist-list"><div class="hist-empty">Chưa có prompt được lưu.</div></div>
   </div>
 
+  <!-- API Status -->
+  <div style="margin-top:24px;background:var(--card);border-radius:18px;padding:16px 20px;border:2.5px solid #D8EEF1">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">Gemini API Status</div>
+      <button onclick="testConnection()" id="testbtn" style="font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;padding:6px 16px;border-radius:50px;border:2px solid var(--downy);color:var(--downy);background:#fff;cursor:pointer">Test Connection</button>
+    </div>
+    <div id="api-status" style="display:flex;align-items:center;gap:8px">
+      <div id="status-dot" style="width:10px;height:10px;border-radius:50%;background:#D8EEF1;flex-shrink:0"></div>
+      <div id="status-text" style="font-size:13px;font-weight:700;color:var(--muted)">Chưa kiểm tra — bấm Test Connection</div>
+    </div>
+  </div>
+
   <div class="footer">SUN.STUDIO Prompt Builder · Imagen 4 · Gemini 2.0 Flash</div>
 </div>
 
@@ -420,6 +432,38 @@ function resetAll(){
 }
 
 renderHistory();
+
+async function testConnection(){
+  const btn=document.getElementById('testbtn');
+  const dot=document.getElementById('status-dot');
+  const txt=document.getElementById('status-text');
+  btn.textContent='Testing...';btn.disabled=true;
+  dot.style.background='#FFB356';
+  txt.style.color='var(--muted)';
+  txt.textContent='Đang kiểm tra kết nối...';
+  try{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({contents:[{parts:[{text:'Reply with exactly: OK'}]}],generationConfig:{maxOutputTokens:5}})
+    });
+    const data=await res.json();
+    if(data.candidates&&data.candidates[0]){
+      dot.style.background='#75D06A';
+      txt.style.color='#4BAD46';
+      txt.textContent='✓ Kết nối thành công — Gemini 2.0 Flash sẵn sàng';
+    } else if(data.error){
+      dot.style.background='#FF8B8B';
+      txt.style.color='var(--mona)';
+      txt.textContent='✗ Lỗi: '+data.error.message;
+    }
+  } catch(e){
+    dot.style.background='#FF8B8B';
+    txt.style.color='var(--mona)';
+    txt.textContent='✗ Không kết nối được — kiểm tra mạng';
+  }
+  btn.textContent='Test Connection';btn.disabled=false;
+}
 </script>
 </body>
 </html>
