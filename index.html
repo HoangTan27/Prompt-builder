@@ -276,7 +276,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     </div>
   </div>
 
-  <div class="footer">SUN.STUDIO Prompt Builder · Imagen 4 · Gemini 2.5 Flash-Lite</div>
+  <div class="footer">SUN.STUDIO Prompt Builder · Imagen 4 · Gemini 2.5 Flash</div>
 </div>
 
 <script>
@@ -341,7 +341,7 @@ async function enhanceWithAI(){
   const fullPrompt=`Rewrite as one cinematic Imagen 4 prompt sentence. Output ONLY the prompt.\n\n${raw}`;
 
   try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17:generateContent?key=${GEMINI_KEY}`,{
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
@@ -435,12 +435,12 @@ async function testConnection(){
   txt.textContent='Đang kiểm tra kết nối...';
   try{
     // GET model info — no content generation, 0 tokens consumed
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite-preview-06-17?key=${GEMINI_KEY}`);
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash?key=${GEMINI_KEY}`);
     const data=await res.json();
     if(data.name){
       dot.style.background='#75D06A';
       txt.style.color='#4BAD46';
-      txt.textContent='✓ Kết nối thành công — Gemini 2.5 Flash-Lite sẵn sàng (0 token used)';
+      txt.textContent='✓ Kết nối thành công — Gemini 2.5 Flash sẵn sàng (0 token used)';
     } else if(data.error){
       dot.style.background='#FF8B8B';
       txt.style.color='var(--mona)';
