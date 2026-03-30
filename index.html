@@ -338,14 +338,7 @@ async function enhanceWithAI(){
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span>Enhancing...';
   hideAI();
-  const systemPrompt=`You are an expert AI image prompt engineer specializing in cinematic photography and Imagen 4.
-Your job: take a structured image prompt and rewrite it into a single, rich, fluent English sentence optimized for Imagen 4.
-Rules:
-- Keep all 4 elements: shot/angle, character, setting, lighting/mood
-- Add vivid cinematic details: textures, micro-expressions, atmospheric depth
-- Use professional photography and cinematography vocabulary
-- Output ONLY the enhanced prompt, no explanation, no quotes, no extra text
-- Max 120 words`;
+  const systemPrompt=`Rewrite this as one rich cinematic English sentence for Imagen 4. Keep all 4 elements (shot, character, setting, lighting). Add vivid details. Output ONLY the prompt, no extra text, max 100 words.`;
 
   try{
     const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
@@ -442,16 +435,13 @@ async function testConnection(){
   txt.style.color='var(--muted)';
   txt.textContent='Đang kiểm tra kết nối...';
   try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({contents:[{parts:[{text:'Reply with exactly: OK'}]}],generationConfig:{maxOutputTokens:5}})
-    });
+    // GET model info — no content generation, 0 tokens consumed
+    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash?key=${GEMINI_KEY}`);
     const data=await res.json();
-    if(data.candidates&&data.candidates[0]){
+    if(data.name){
       dot.style.background='#75D06A';
       txt.style.color='#4BAD46';
-      txt.textContent='✓ Kết nối thành công — Gemini 2.0 Flash sẵn sàng';
+      txt.textContent='✓ Kết nối thành công — Gemini 2.0 Flash sẵn sàng (0 token used)';
     } else if(data.error){
       dot.style.background='#FF8B8B';
       txt.style.color='var(--mona)';
