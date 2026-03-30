@@ -338,7 +338,11 @@ async function enhanceWithAI(){
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span>Enhancing...';
   hideAI();
-  const fullPrompt=`Rewrite as one cinematic Imagen 4 prompt sentence. Output ONLY the prompt.\n\n${raw}`;
+  const fullPrompt=`You are a creative director writing image generation prompts. Take the input below and rewrite it as a single fluent, vivid, cinematic English sentence for Imagen 4. Include all details: shot type, character description, setting, and lighting/mood. Do not truncate. Output the prompt sentence only, nothing else.
+
+Input: ${raw}
+
+Output (one complete sentence):`;
 
   try{
     const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{
@@ -346,14 +350,21 @@ async function enhanceWithAI(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         contents:[{parts:[{text:fullPrompt}]}],
-        generationConfig:{temperature:0.8,maxOutputTokens:150}
+        generationConfig:{temperature:0.7,maxOutputTokens:300}
       })
     });
     const data=await res.json();
     if(data.candidates&&data.candidates[0]){
-      lastAIText=data.candidates[0].content.parts[0].text.trim();
-      document.getElementById('aiText').textContent=lastAIText;
-      document.getElementById('aiBox').classList.add('visible');
+      // Gemini 2.5 may return thinking blocks in parts — find the actual text part
+      const parts=data.candidates[0].content.parts||[];
+      const textPart=parts.find(p=>p.text&&!p.thought);
+      if(textPart){
+        lastAIText=textPart.text.trim();
+        document.getElementById('aiText').textContent=lastAIText;
+        document.getElementById('aiBox').classList.add('visible');
+      } else {
+        alert('Không tìm thấy text output từ Gemini.');
+      }
     } else {
       alert('Gemini API error: '+(data.error&&data.error.message||'Unknown error'));
     }
