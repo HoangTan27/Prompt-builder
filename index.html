@@ -350,20 +350,25 @@ Output (one complete sentence):`;
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         contents:[{parts:[{text:fullPrompt}]}],
-        generationConfig:{temperature:0.7,maxOutputTokens:300}
+        generationConfig:{
+          temperature:0.7,
+          maxOutputTokens:300,
+          thinkingConfig:{thinkingBudget:0}
+        }
       })
     });
     const data=await res.json();
     if(data.candidates&&data.candidates[0]){
-      // Gemini 2.5 may return thinking blocks in parts — find the actual text part
       const parts=data.candidates[0].content.parts||[];
-      const textPart=parts.find(p=>p.text&&!p.thought);
-      if(textPart){
-        lastAIText=textPart.text.trim();
+      // Skip thinking blocks (thought===true), collect all real text parts
+      const textParts=parts.filter(p=>p.thought!==true&&typeof p.text==='string');
+      const fullText=textParts.map(p=>p.text).join('').trim();
+      if(fullText){
+        lastAIText=fullText;
         document.getElementById('aiText').textContent=lastAIText;
         document.getElementById('aiBox').classList.add('visible');
       } else {
-        alert('Không tìm thấy text output từ Gemini.');
+        alert('Gemini trả về rỗng. Raw: '+JSON.stringify(parts));
       }
     } else {
       alert('Gemini API error: '+(data.error&&data.error.message||'Unknown error'));
