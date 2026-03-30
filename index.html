@@ -338,16 +338,19 @@ async function enhanceWithAI(){
   btn.disabled=true;
   btn.innerHTML='<span class="spinner"></span>Enhancing...';
   hideAI();
-  const systemPrompt=`Rewrite this as one rich cinematic English sentence for Imagen 4. Keep all 4 elements (shot, character, setting, lighting). Add vivid details. Output ONLY the prompt, no extra text, max 100 words.`;
+  const fullPrompt=`You are an AI image prompt engineer for Imagen 4. Rewrite the following structured prompt into one rich, fluent cinematic English sentence. Keep all 4 elements: shot/angle, character, setting, lighting/mood. Add vivid cinematic details. Output ONLY the final prompt, no explanation, no quotes.
+
+Input: ${raw}
+
+Output:`;
 
   try{
     const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        system_instruction:{parts:[{text:systemPrompt}]},
-        contents:[{parts:[{text:`Enhance this prompt:\n${raw}`}]}],
-        generationConfig:{temperature:0.8,maxOutputTokens:200}
+        contents:[{parts:[{text:fullPrompt}]}],
+        generationConfig:{temperature:0.8,maxOutputTokens:150}
       })
     });
     const data=await res.json();
