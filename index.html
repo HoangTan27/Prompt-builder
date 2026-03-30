@@ -350,8 +350,7 @@ Output (one complete sentence):`;
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         contents:[{parts:[{text:fullPrompt}]}],
-        generationConfig:{temperature:0.7,maxOutputTokens:400},
-        thinkingConfig:{thinkingBudget:0}
+        generationConfig:{temperature:0.7,maxOutputTokens:2048},
       })
     });
     const data=await res.json();
