@@ -113,7 +113,7 @@ body{font-family:'Nunito',sans-serif;min-height:100vh;background:var(--bg);color
 <div class="app">
   <div class="hdr">
     <h1>Prompt <em>Builder</em></h1>
-    <p>Bản mở rộng cho character, animal và main object / asset. Cấu trúc được sắp theo hướng prompt production: subject → action / context → composition.</p>
+    <p></p>
   </div>
 
   <div class="panels">
@@ -641,7 +641,7 @@ function buildObject(){return joinParts([val('oCategory'),val('oName'),val('oMat
 function buildSubjectSegment(){const type=val('subjectType');const character=buildCharacter();const animal=buildAnimal();const object=buildObject();if(type==='animal') return animal;if(type==='object') return object;return character;}
 function buildSettingSegment(){return joinParts([val('sEnv'),val('sTime'),val('sWeather'),val('sMood'),val('sDetails')]);}
 function buildCameraSegment(){return joinParts([val('camShot'),val('camAngle'),val('camLens'),val('camComp'),val('camStyle'),val('camLayout')]);}
-function getPlain(){const subject=buildSubjectSegment();const setting=buildSettingSegment();const camera=buildCameraSegment();const parts=['Create an image'];if(subject) parts.push(`featuring ${subject}`);if(setting) parts.push(setting);if(camera) parts.push(camera);return parts.filter(Boolean).join(', ')+'.';}
+function getPlain(){const subject=buildSubjectSegment();const setting=buildSettingSegment();const camera=buildCameraSegment();const parts=[''];if(subject) parts.push(`featuring ${subject}`);if(setting) parts.push(setting);if(camera) parts.push(camera);return parts.filter(Boolean).join(', ')+'.';}
 function build(){const preview=document.getElementById('preview');const plain=getPlain();preview.value=plain==='.'?'':plain;updateCount();}
 function updateCount(){const t=document.getElementById('preview').value||'';document.getElementById('charcount').textContent=t.length?`${t.length} chars`:'0 chars';}
 function updateSectionVisibility(){const type=val('subjectType')||'character';const showCharacter=type==='character';const showAnimal=type==='animal';const showObject=type==='object';document.getElementById('characterPanel').classList.toggle('hidden',!showCharacter);document.getElementById('animalPanel').classList.toggle('hidden',!showAnimal);document.getElementById('objectPanel').classList.toggle('hidden',!showObject);}
