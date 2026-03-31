@@ -4,258 +4,617 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Prompt Builder — SUN.STUDIO</title>
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet"/>
+
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --amethyst:#9956DE;--sky:#1FA7E1;--downy:#6ED1CF;
-  --green:#75D06A;--orange:#FFB356;--mona:#FF8B8B;--pink:#FB96BB;
-  --bg:#F0FAFA;--card:#fff;--text:#2D4A52;--muted:#7BAAB4;
+  --purple:#7C3AED;--purple-light:#EDE9FE;--purple-mid:#8B5CF6;
+  --bg:#F5F3FF;--white:#fff;--card:#fff;
+  --text:#1C1433;--text2:#6B7280;--text3:#9CA3AF;
+  --border:#E5E7EB;--border-purple:#C4B5FD;
+  --shadow:0 2px 8px rgba(124,58,237,0.08);
+  --shadow-md:0 4px 16px rgba(124,58,237,0.12);
 }
-body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.app{max-width:760px;margin:0 auto;padding:32px 20px 60px}
+body{font-family:'Nunito',sans-serif;min-height:100vh;background:var(--bg);color:var(--text)}
+.app{max-width:1100px;margin:0 auto;padding:40px 24px 80px}
 
-.hdr{text-align:center;margin-bottom:32px}
-.hdr-pill{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2.5px solid var(--downy);border-radius:50px;padding:8px 22px;margin-bottom:16px}
-.hdr-dot{width:10px;height:10px;border-radius:50%;background:var(--downy)}
-.hdr-pill span{font-size:13px;font-weight:800;color:var(--downy);letter-spacing:.04em;text-transform:uppercase}
-.hdr h1{font-size:32px;font-weight:900;color:var(--text)}
-.hdr h1 em{font-style:normal;color:var(--amethyst)}
-.hdr p{font-size:14px;color:var(--muted);margin-top:8px;font-weight:600}
+/* Header */
+.hdr{text-align:center;margin-bottom:36px}
+.hdr h1{font-size:42px;font-weight:900;line-height:1.1;letter-spacing:-.02em;color:var(--text);margin-bottom:8px}
+.hdr h1 em{font-style:normal;color:var(--purple)}
+.hdr p{font-size:14px;color:var(--text2);max-width:600px;margin:0 auto;font-weight:600}
 
-.section-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px}
+/* Panels */
+.panels{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:820px){.panels{grid-template-columns:1fr}}
+.panel{background:var(--card);border:1.5px solid var(--border);border-radius:20px;padding:22px 20px;box-shadow:var(--shadow);transition:box-shadow .2s,border-color .2s}
+.panel:hover{box-shadow:var(--shadow-md);border-color:var(--border-purple)}
+.panel.hidden{display:none}
+.panel.full{grid-column:1/-1}
+.panel-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:18px;padding-bottom:14px;border-bottom:1.5px solid var(--border)}
+.panel-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;color:#fff}
+.n1{background:var(--purple)}
+.n2{background:#2563EB}
+.n3{background:#059669}
+.n4{background:#D97706}
+.n5{background:#DB2777}
+.n6{background:#0891B2}
+.n7{background:#7C3AED}
+.panel-title{font-size:13px;font-weight:800;color:var(--text);letter-spacing:-.01em}
+.panel-sub{font-size:12px;color:var(--text3);margin-top:2px;font-weight:600}
+.grid-2,.grid-3,.grid-4{display:grid;gap:16px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:1fr 1fr 1fr}
+.grid-4{grid-template-columns:1fr 1fr 1fr 1fr}
+@media(max-width:960px){.grid-4{grid-template-columns:1fr 1fr}}
+@media(max-width:720px){.grid-3,.grid-2,.grid-4{grid-template-columns:1fr}}
 
-.presets{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
-.chip{font-size:13px;font-weight:800;padding:8px 18px;border-radius:50px;border:2.5px solid;cursor:pointer;transition:all .15s;font-family:'Nunito',sans-serif;background:#fff}
-.chip:hover{transform:translateY(-2px)}
-.chip:active{transform:scale(0.96)}
-.chip-desert{color:var(--orange);border-color:var(--orange)}
-.chip-desert:hover{background:var(--orange);color:#fff}
-.chip-garden{color:var(--green);border-color:var(--green)}
-.chip-garden:hover{background:var(--green);color:#fff}
-.chip-puppy{color:var(--mona);border-color:var(--mona)}
-.chip-puppy:hover{background:var(--mona);color:#fff}
-.chip-proposal{color:var(--pink);border-color:var(--pink)}
-.chip-proposal:hover{background:var(--pink);color:#fff}
-
-.slots{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
-@media(max-width:520px){.slots{grid-template-columns:1fr}}
-.slot{background:var(--card);border-radius:18px;padding:18px;border:2.5px solid #E8F4F6;position:relative;overflow:hidden;transition:transform .15s}
-.slot::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;border-radius:18px 18px 0 0}
-.slot:hover{transform:translateY(-2px)}
-.slot-1::before{background:var(--amethyst)} .slot-1{box-shadow:0 5px 0 #9956DE22}
-.slot-2::before{background:var(--sky)} .slot-2{box-shadow:0 5px 0 #1FA7E122}
-.slot-3::before{background:var(--green)} .slot-3{box-shadow:0 5px 0 #75D06A22}
-.slot-4::before{background:var(--orange)} .slot-4{box-shadow:0 5px 0 #FFB35622}
-.slot-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.slot-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff;flex-shrink:0}
-.n1{background:var(--amethyst)} .n2{background:var(--sky)} .n3{background:var(--green)} .n4{background:var(--orange)}
-.slot-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.slot select,.slot input[type=text]{
-  width:100%;margin-bottom:9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
-  color:var(--text);background:#F6FBFC;border:2px solid #D8EEF1;border-radius:12px;
-  padding:9px 13px;outline:none;appearance:none;-webkit-appearance:none;transition:border-color .2s
+/* Field groups */
+.field-group{margin-bottom:12px;background:#F9FAFB;border:1.5px solid var(--border);border-radius:14px;padding:12px 14px}
+.field-group:last-child{margin-bottom:0}
+.field-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+.panel select,.panel input[type=text],.panel textarea{
+  width:100%;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;
+  color:var(--text);background:#fff;border:1.5px solid var(--border);border-radius:10px;
+  padding:10px 14px;outline:none;appearance:none;-webkit-appearance:none;
+  transition:border-color .2s,background .2s;cursor:pointer
 }
-.slot select:focus,.slot input[type=text]:focus{border-color:var(--downy);background:#fff}
-.slot select:last-child,.slot input[type=text]:last-child{margin-bottom:0}
-.slot input[type=text]::placeholder{color:#aac4cc;font-weight:600}
+.panel textarea{min-height:80px;resize:vertical}
+.panel select:focus,.panel input[type=text]:focus,.panel textarea:focus{
+  border-color:var(--purple);background:#fff;
+  box-shadow:0 0 0 3px rgba(124,58,237,0.1)
+}
+.panel input::placeholder,.panel textarea::placeholder{color:var(--text3);font-weight:600}
+.panel select option{background:#fff;color:var(--text)}
 
 /* Preview */
-.preview-wrap{background:var(--card);border-radius:18px;padding:20px 22px;margin-bottom:10px;border:2.5px solid #D8EEF1;box-shadow:0 5px 0 #D8EEF1}
+.preview-wrap{background:var(--white);border:1.5px solid var(--border-purple);border-radius:20px;padding:20px 22px;margin-bottom:12px;box-shadow:var(--shadow-md)}
 .preview-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.preview-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.char-count{font-size:12px;font-weight:700;color:var(--muted)}
-.preview-text{font-size:14px;font-weight:700;line-height:1.85;color:var(--text);min-height:56px;word-break:break-word}
-.preview-empty{color:#aac4cc;font-weight:600}
-.tag{display:inline;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:800;margin-right:3px}
-.t1{background:#F0E6FB;color:var(--amethyst)}
-.t2{background:#E3F5FC;color:var(--sky)}
-.t3{background:#EBF9E9;color:#4BAD46}
-.t4{background:#FFF3E3;color:#D88C1A}
-
-/* AI Enhanced box */
-.ai-box{background:linear-gradient(135deg,#F5EEFF,#EAF8FF);border:2.5px solid #C8A8F0;border-radius:18px;padding:18px 20px;margin-bottom:10px;display:none}
-.ai-box.visible{display:block}
-.ai-box-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.ai-label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--amethyst);display:flex;align-items:center;gap:6px}
-.ai-star{font-size:14px}
-.ai-copy-btn{font-size:12px;font-weight:800;color:var(--sky);background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif}
-.ai-text{font-size:14px;font-weight:700;line-height:1.85;color:var(--text);word-break:break-word}
+.preview-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--purple)}
+.char-count{font-size:12px;color:var(--text3);font-weight:700}
+#preview{
+  font-size:14px;line-height:1.85;color:var(--text);min-height:100px;
+  word-break:break-word;font-weight:700;width:100%;background:transparent;
+  border:none;outline:none;resize:none;font-family:'Nunito',sans-serif;display:block
+}
+#preview::placeholder{color:var(--text3);font-size:13px;font-weight:600}
 
 /* Actions */
-.actions{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:16px}
-@media(max-width:480px){.actions{grid-template-columns:1fr 1fr}}
-.btn{font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;padding:12px 6px;border-radius:50px;border:none;cursor:pointer;transition:all .15s}
-.btn:active{transform:scale(0.96)}
-.btn-copy{background:var(--amethyst);color:#fff;box-shadow:0 4px 0 #6B2DAF}
-.btn-copy:hover{background:#8040C9}
-.btn-ai{background:linear-gradient(135deg,var(--amethyst),var(--sky));color:#fff;box-shadow:0 4px 0 #2D6FA5;position:relative;overflow:hidden}
-.btn-ai:hover{opacity:.9}
-.btn-ai:disabled{opacity:.6;cursor:not-allowed}
-.btn-save{background:var(--downy);color:#fff;box-shadow:0 4px 0 #3FA89F}
-.btn-save:hover{background:#50B8B5}
-.btn-reset{background:#F0F8FA;color:var(--muted);box-shadow:0 4px 0 #C8E0E5;border:2px solid #D8EEF1}
-.btn.copied{background:var(--green) !important;box-shadow:0 4px 0 #4BA045 !important}
-
-/* Spinner */
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:4px}
-@keyframes spin{to{transform:rotate(360deg)}}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px}
+@media(max-width:560px){.actions{grid-template-columns:1fr 1fr}}
+.btn{font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;padding:12px 8px;border-radius:50px;border:none;cursor:pointer;transition:all .2s;letter-spacing:-.01em}
+.btn:active{transform:scale(0.97)}
+.btn-copy{background:var(--purple);color:#fff;box-shadow:0 4px 0 #5B21B6}
+.btn-copy:hover{background:#6D28D9;transform:translateY(-1px)}
+.btn-save{background:var(--purple-light);color:var(--purple);border:1.5px solid var(--border-purple)}
+.btn-save:hover{background:#DDD6FE}
+.btn-reset{background:#F9FAFB;color:var(--text2);border:1.5px solid var(--border)}
+.btn-reset:hover{background:#F3F4F6;color:var(--text)}
+.btn.copied{background:#059669 !important;box-shadow:0 4px 0 #047857 !important;color:#fff !important}
 
 /* History */
-.history-wrap{background:var(--card);border-radius:18px;padding:18px 20px;border:2.5px solid #D8EEF1}
+.history-wrap{background:var(--white);border:1.5px solid var(--border);border-radius:20px;padding:18px 20px;box-shadow:var(--shadow)}
 .history-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.history-title{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
-.clear-btn{font-size:12px;font-weight:800;color:var(--mona);background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif}
-.hist-empty{font-size:13px;color:#aac4cc;font-weight:600}
-.hist-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:#F6FBFC;margin-bottom:8px;cursor:pointer;transition:background .15s;border:1.5px solid #D8EEF1}
-.hist-item:hover{background:#EAF5F7;border-color:var(--downy)}
+.history-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text2)}
+.clear-btn{font-size:12px;font-weight:700;color:#EF4444;background:none;border:none;cursor:pointer;font-family:'Nunito',sans-serif}
+.hist-empty{font-size:13px;color:var(--text3);font-weight:600}
+.hist-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:12px;background:#F9FAFB;margin-bottom:6px;cursor:pointer;transition:all .15s;border:1.5px solid transparent}
+.hist-item:hover{background:var(--purple-light);border-color:var(--border-purple)}
 .hist-item:last-child{margin-bottom:0}
-.hist-bullet{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-.hb-normal{background:var(--pink)} .hb-ai{background:var(--amethyst)}
-.hist-text{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
-.hist-meta{font-size:11px;font-weight:800;color:var(--sky);flex-shrink:0}
-.hist-ai-badge{font-size:10px;font-weight:800;background:#F0E6FB;color:var(--amethyst);border-radius:6px;padding:1px 6px;flex-shrink:0}
-
-.footer{text-align:center;margin-top:32px;font-size:12px;font-weight:700;color:var(--muted)}
+.hist-bullet{width:8px;height:8px;border-radius:50%;flex-shrink:0;background:var(--purple)}
+.hist-text{font-size:12px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;font-weight:700}
+.hist-meta{font-size:11px;color:var(--text3);flex-shrink:0;font-weight:700}
+.hb-normal{background:var(--purple)}
+.footer{text-align:center;margin-top:32px;font-size:11px;color:var(--text3);letter-spacing:.06em;text-transform:uppercase;font-weight:700}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="hdr">
-    <div class="hdr-pill"><div class="hdr-dot"></div><span>SUN.STUDIO</span></div>
     <h1>Prompt <em>Builder</em></h1>
-    <p>Imagen 4 · 4-Slot Format · Powered by Gemini AI</p>
+    <p>Bản mở rộng cho character, animal và main object / asset. Cấu trúc được sắp theo hướng prompt production: subject → action / context → composition.</p>
   </div>
 
-  <div class="section-label">Game Presets</div>
-  <div class="presets">
-    <button class="chip chip-desert" onclick="loadPreset('desert')">🏜 Desert Adventure</button>
-    <button class="chip chip-garden" onclick="loadPreset('garden')">🌿 Garden Restoration</button>
-    <button class="chip chip-puppy" onclick="loadPreset('puppy')">🐶 Puppy Rescue</button>
-    <button class="chip chip-proposal" onclick="loadPreset('proposal')">💍 Proposal</button>
-  </div>
-
-  <div class="slots">
-    <div class="slot slot-1">
-      <div class="slot-header"><div class="slot-num n1">①</div><div class="slot-title">Shot & Angle</div></div>
-      <select id="s1a" onchange="build()">
-        <option value="">— Shot type —</option>
-        <option value="Close-up shot">Close-up</option>
-        <option value="Medium shot">Medium shot</option>
-        <option value="Wide shot">Wide shot</option>
-        <option value="Extreme close-up">Extreme close-up</option>
-        <option value="Bird's eye view">Bird's eye view</option>
-        <option value="Low angle shot">Low angle</option>
-        <option value="Over-the-shoulder shot">Over-the-shoulder</option>
-        <option value="Dutch angle shot">Dutch angle</option>
-      </select>
-      <select id="s1b" onchange="build()">
-        <option value="">— Aspect ratio —</option>
-        <option value="16:9 aspect ratio">16:9 landscape</option>
-        <option value="9:16 aspect ratio">9:16 portrait</option>
-        <option value="1:1 aspect ratio">1:1 square</option>
-        <option value="4:5 aspect ratio">4:5 feed</option>
-      </select>
-      <input id="s1c" type="text" placeholder="Lens, depth of field..." oninput="build()"/>
+  <div class="panels">
+    <div class="panel full">
+      <div class="panel-header">
+        <div class="panel-num n1">①</div>
+        <div>
+          <div class="panel-title">Direction & Subject Logic</div>
+          <div class="panel-sub">Chọn loại subject để builder chỉ ghép những field có ý nghĩa.</div>
+        </div>
+      </div>
+      <div class="grid-2"><div class="field-group">
+          <div class="field-label">Subject Type</div>
+          <select id="subjectType" onchange="updateSectionVisibility(); build()">
+            <option value="character">Character</option>
+            <option value="animal">Animal</option>
+            <option value="object">Main object / asset</option>
+          </select>
+        </div>
     </div>
 
-    <div class="slot slot-2">
-      <div class="slot-header"><div class="slot-num n2">②</div><div class="slot-title">Character</div></div>
-      <select id="s2a" onchange="build()">
-        <option value="">— Age / gender —</option>
-        <option value="young Southeast Asian woman in her mid-20s">Young woman SEA 20s</option>
-        <option value="young Southeast Asian man in his mid-20s">Young man SEA 20s</option>
-        <option value="middle-aged woman">Middle-aged woman</option>
-        <option value="elderly woman">Elderly woman</option>
-        <option value="a child around 8 years old">Child ~8yo</option>
-      </select>
-      <select id="s2b" onchange="build()">
-        <option value="">— Emotion —</option>
-        <option value="with a joyful beaming expression">Joyful</option>
-        <option value="with a calm and peaceful expression">Calm & peaceful</option>
-        <option value="with a determined focused expression">Determined</option>
-        <option value="with a surprised wide-eyed expression">Surprised</option>
-        <option value="with a tender loving expression">Tender / loving</option>
-        <option value="with a playful cheeky expression">Playful</option>
-        <option value="with a nostalgic wistful expression">Nostalgic</option>
-      </select>
-      <input id="s2c" type="text" placeholder="Outfit, pose, accessories..." oninput="build()"/>
+    <div class="panel" id="characterPanel">
+      <div class="panel-header">
+        <div class="panel-num n2">②</div>
+        <div>
+          <div class="panel-title">Character</div>
+          <div class="panel-sub">Người là subject chính.</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field-group">
+            <div class="field-label">Gender</div>
+            <select id="cGender" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="a woman">Woman</option>
+              <option value="a man">Man</option>
+              <option value="a girl">Girl</option>
+              <option value="a boy">Boy</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Age</div>
+            <select id="cAge" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="around 6 to 8 years old">6–8 yo</option>
+              <option value="around 12 to 14 years old">12–14 yo</option>
+              <option value="around 16 to 18 years old">16–18 yo</option>
+              <option value="in their early 20s">Early 20s</option>
+              <option value="in their mid-20s">Mid 20s</option>
+              <option value="in their late 20s">Late 20s</option>
+              <option value="in their early 30s">Early 30s</option>
+              <option value="in their mid-30s">Mid 30s</option>
+              <option value="in their 40s">40s</option>
+              <option value="in their 50s">50s</option>
+              <option value="in their 60s">60s</option>
+              <option value="in their 70s">70s</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Skin Tone</div>
+            <select id="cSkin" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="with fair porcelain skin">Fair / porcelain</option>
+              <option value="with light skin">Light skin</option>
+              <option value="with medium olive skin">Medium / olive</option>
+              <option value="with warm tan skin">Tan / warm brown</option>
+              <option value="with deep brown skin">Deep brown</option>
+              <option value="with dark ebony skin">Dark / ebony</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Facial Features</div>
+            <select id="cFeature" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="with Western European features">Western European</option>
+              <option value="with East Asian features">East Asian</option>
+              <option value="with Southeast Asian features">Southeast Asian</option>
+              <option value="with South Asian features">South Asian</option>
+              <option value="with Latin or Mediterranean features">Latin / Mediterranean</option>
+              <option value="with Black or African diaspora features">Black / African diaspora</option>
+              <option value="with Middle Eastern features">Middle Eastern</option>
+              <option value="with mixed-heritage features">Mixed heritage</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="field-group">
+            <div class="field-label">Expression</div>
+            <select id="cEmotion" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="with a joyful radiant expression">Joyful</option>
+              <option value="with a delighted smiling expression">Delighted</option>
+              <option value="with a playful cheeky expression">Playful</option>
+              <option value="with a warm affectionate expression">Affectionate</option>
+              <option value="with a serene peaceful expression">Serene</option>
+              <option value="with a calm grounded expression">Calm</option>
+              <option value="with a contemplative introspective expression">Contemplative</option>
+              <option value="with a neutral composed expression">Neutral</option>
+              <option value="with a tired distant expression">Tired</option>
+              <option value="with a worried uneasy expression">Worried</option>
+              <option value="with a melancholic wistful expression">Melancholic</option>
+              <option value="with a sorrowful expression">Sad</option>
+              <option value="with an angry defiant expression">Angry</option>
+              <option value="with a fierce intense expression">Fierce</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Pose / Action</div>
+            <input id="cAction" type="text" placeholder="e.g. standing with one hand in pocket, mid-laugh, looking off camera..." oninput="build()"/>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Wardrobe / Props</div>
+            <textarea id="cWardrobe" placeholder="e.g. oversized linen suit in ivory, chunky gold earrings, holding a bouquet..." oninput="build()"></textarea>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="slot slot-3">
-      <div class="slot-header"><div class="slot-num n3">③</div><div class="slot-title">Setting</div></div>
-      <select id="s3a" onchange="build()">
-        <option value="">— Environment —</option>
-        <option value="in a sunlit overgrown garden with wildflowers">Overgrown garden</option>
-        <option value="on a golden sand desert dune at dusk">Desert dune</option>
-        <option value="in a cozy warmly-lit cottage interior">Cozy cottage</option>
-        <option value="on a city rooftop at sunset">City rooftop</option>
-        <option value="in a lush tropical rainforest">Tropical rainforest</option>
-        <option value="on a calm beach at low tide">Calm beach</option>
-        <option value="in a magical glowing forest">Magical forest</option>
-      </select>
-      <input id="s3b" type="text" placeholder="Additional setting details..." oninput="build()"/>
+    <div class="panel" id="animalPanel">
+      <div class="panel-header">
+        <div class="panel-num n3">③</div>
+        <div>
+          <div class="panel-title">Animal</div>
+          <div class="panel-sub">Cho pet portrait, wildlife, mascot hoặc combo với character.</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field-group">
+            <div class="field-label">Animal Type</div>
+            <select id="aType" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="a dog">Dog</option>
+              <option value="a cat">Cat</option>
+              <option value="a horse">Horse</option>
+              <option value="a rabbit">Rabbit</option>
+              <option value="a fox">Fox</option>
+              <option value="a wolf">Wolf</option>
+              <option value="a tiger">Tiger</option>
+              <option value="a lion">Lion</option>
+              <option value="a deer">Deer</option>
+              <option value="a bear">Bear</option>
+              <option value="a bird">Bird</option>
+              <option value="a parrot">Parrot</option>
+              <option value="a owl">Owl</option>
+              <option value="a dolphin">Dolphin</option>
+              <option value="a whale">Whale</option>
+              <option value="a koi fish">Koi fish</option>
+              <option value="a dragon">Dragon</option>
+              <option value="a creature">Fantasy creature</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Breed / Species / Type</div>
+            <input id="aBreed" type="text" placeholder="e.g. shiba inu, ragdoll cat, white horse, red fox..." oninput="build()"/>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Life Stage</div>
+            <select id="aStage" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="as a tiny baby">Baby</option>
+              <option value="as a young juvenile">Juvenile</option>
+              <option value="as a playful puppy">Puppy</option>
+              <option value="as a playful kitten">Kitten</option>
+              <option value="as a full-grown adult">Adult</option>
+              <option value="as a mature older animal">Senior</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Coat / Markings</div>
+            <input id="aCoat" type="text" placeholder="e.g. fluffy cream coat, black patches, glossy feathers..." oninput="build()"/>
+          </div>
+        </div>
+        <div>
+          <div class="field-group">
+            <div class="field-label">Expression / Mood</div>
+            <select id="aEmotion" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="looking joyful and eager">Joyful</option>
+              <option value="looking playful and energetic">Playful</option>
+              <option value="looking curious and alert">Curious</option>
+              <option value="looking gentle and affectionate">Affectionate</option>
+              <option value="looking calm and relaxed">Calm</option>
+              <option value="looking sleepy and peaceful">Sleepy</option>
+              <option value="looking watchful and cautious">Watchful</option>
+              <option value="looking anxious and tense">Anxious</option>
+              <option value="looking lonely and subdued">Sad</option>
+              <option value="looking fierce and powerful">Fierce</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Action</div>
+            <input id="aAction" type="text" placeholder="e.g. running through shallow water, sitting proudly, resting on a sofa..." oninput="build()"/>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Accessories / Styling</div>
+            <textarea id="aStyle" placeholder="e.g. red bandana, silver tag collar, floral harness..." oninput="build()"></textarea>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <div class="slot slot-4">
-      <div class="slot-header"><div class="slot-num n4">④</div><div class="slot-title">Lighting & Mood</div></div>
-      <select id="s4a" onchange="build()">
-        <option value="">— Light source —</option>
-        <option value="warm golden hour sunlight from the left">Golden hour left</option>
-        <option value="soft diffused overcast daylight">Soft overcast</option>
-        <option value="dramatic rim lighting from behind">Dramatic rim light</option>
-        <option value="cool blue moonlight filtering through">Moonlight</option>
-        <option value="warm candlelight glow">Candlelight</option>
-        <option value="dappled forest light">Dappled forest</option>
-      </select>
-      <select id="s4b" onchange="build()">
-        <option value="">— Color palette —</option>
-        <option value="warm amber and terracotta tones">Warm amber & terracotta</option>
-        <option value="cool teal and lavender tones">Cool teal & lavender</option>
-        <option value="soft pastel pink and cream">Pastel pink & cream</option>
-        <option value="deep emerald and gold">Emerald & gold</option>
-        <option value="muted earth tones">Muted earth tones</option>
-      </select>
-      <select id="s4c" onchange="build()">
-        <option value="">— Mood word —</option>
-        <option value="cinematic mood">Cinematic</option>
-        <option value="dreamy mood">Dreamy</option>
-        <option value="epic mood">Epic</option>
-        <option value="intimate mood">Intimate</option>
-        <option value="joyful mood">Joyful</option>
-        <option value="melancholic mood">Melancholic</option>
-        <option value="mysterious mood">Mysterious</option>
-      </select>
+    <div class="panel" id="objectPanel">
+      <div class="panel-header">
+        <div class="panel-num n4">④</div>
+        <div>
+          <div class="panel-title">Main Object / Asset</div>
+          <div class="panel-sub">Cho product hero, ecommerce asset, poster object hoặc key visual.</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field-group">
+            <div class="field-label">Object Category</div>
+            <select id="oCategory" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="a beauty product">Beauty product</option>
+              <option value="a skincare jar">Skincare jar</option>
+              <option value="a perfume bottle">Perfume bottle</option>
+              <option value="a cosmetic tube">Cosmetic tube</option>
+              <option value="a beverage can">Beverage can</option>
+              <option value="a glass bottle">Glass bottle</option>
+              <option value="a sneaker">Sneaker</option>
+              <option value="a handbag">Handbag</option>
+              <option value="a watch">Watch</option>
+              <option value="a pair of sunglasses">Sunglasses</option>
+              <option value="a smartphone">Smartphone</option>
+              <option value="a laptop">Laptop</option>
+              <option value="a chair">Chair</option>
+              <option value="a lamp">Lamp</option>
+              <option value="a packaged food product">Packaged food product</option>
+              <option value="a logo mark">Logo mark</option>
+              <option value="a poster object composition">Poster object composition</option>
+              <option value="a hero product">Generic hero product</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Object Name / Description</div>
+            <input id="oName" type="text" placeholder="e.g. frosted glass moisturizer jar, retro silver espresso machine..." oninput="build()"/>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Material</div>
+            <select id="oMaterial" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="made of frosted glass">Frosted glass</option>
+              <option value="made of clear glass">Clear glass</option>
+              <option value="made of polished metal">Polished metal</option>
+              <option value="made of brushed aluminum">Brushed aluminum</option>
+              <option value="made of matte ceramic">Matte ceramic</option>
+              <option value="made of glossy ceramic">Glossy ceramic</option>
+              <option value="made of soft-touch plastic">Soft-touch plastic</option>
+              <option value="made of leather">Leather</option>
+              <option value="made of canvas">Canvas</option>
+              <option value="made of wood">Wood</option>
+              <option value="made of stone">Stone</option>
+              <option value="made of recycled paperboard">Recycled paperboard</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Finish</div>
+            <select id="oFinish" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="with a matte finish">Matte</option>
+              <option value="with a satin finish">Satin</option>
+              <option value="with a glossy finish">Glossy</option>
+              <option value="with a mirror finish">Mirror</option>
+              <option value="with a textured finish">Textured</option>
+              <option value="with embossed details">Embossed</option>
+              <option value="with transparent surfaces">Transparent</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="field-group">
+            <div class="field-label">Colorway</div>
+            <input id="oColor" type="text" placeholder="e.g. warm nude and soft gold, monochrome silver, deep green..." oninput="build()"/>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Presentation</div>
+            <select id="oPresentation" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="presented as a clean isolated packshot">Isolated packshot</option>
+              <option value="presented as a premium hero product shot">Hero product shot</option>
+              <option value="floating in mid-air">Floating object</option>
+              <option value="placed on a pedestal">On pedestal</option>
+              <option value="arranged in a flat lay composition">Flat lay</option>
+              <option value="shown as an exploded view">Exploded view</option>
+              <option value="displayed as a packaging mockup">Packaging mockup</option>
+              <option value="styled as a poster centerpiece">Poster centerpiece</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Exact Text / Branding</div>
+            <input id="oText" type="text" placeholder='e.g. GLOW RITUAL, SUN.STUDIO, 10% OFF' oninput="build()"/>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Extra Object Details</div>
+            <textarea id="oDetails" placeholder="e.g. minimal embossed cap, water droplets, folded carton sleeve, subtle reflections..." oninput="build()"></textarea>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
 
-  <!-- Raw prompt preview -->
+    <div class="panel full">
+      <div class="panel-header">
+        <div class="panel-num n5">⑤</div>
+        <div>
+          <div class="panel-title">Setting & Atmosphere</div>
+          <div class="panel-sub">Mở rộng không gian để dùng được cho portrait, pet, product hero và poster.</div>
+        </div>
+      </div>
+      <div class="grid-4">
+        <div class="field-group">
+          <div class="field-label">Environment</div>
+          <select id="sEnv" onchange="build()">
+            <option value="">— Select —</option>
+            <option value="in a seamless studio cyclorama">Seamless studio cyclorama</option>
+            <option value="against a solid color backdrop">Solid color backdrop</option>
+            <option value="on a luxury bathroom vanity">Luxury bathroom vanity</option>
+            <option value="on a modern kitchen counter">Modern kitchen counter</option>
+            <option value="in a minimalist living room">Minimalist living room</option>
+            <option value="inside a brutalist concrete interior">Brutalist interior</option>
+            <option value="inside a greenhouse full of soft natural light">Greenhouse</option>
+            <option value="inside a cozy cafe">Cafe</option>
+            <option value="inside a museum gallery">Museum gallery</option>
+            <option value="inside a futuristic corridor">Futuristic corridor</option>
+            <option value="inside a spaceship interior">Spaceship interior</option>
+            <option value="on a rooftop overlooking the skyline">Rooftop skyline</option>
+            <option value="on a neon-lit city street at night">Neon city street</option>
+            <option value="on an old European street">Old European street</option>
+            <option value="in a flower-filled botanical garden">Botanical garden</option>
+            <option value="in a lush natural landscape">Nature landscape</option>
+            <option value="in a dense forest clearing">Forest clearing</option>
+            <option value="on tropical beach sand by the shoreline">Tropical beach</option>
+            <option value="on golden desert dunes">Desert dunes</option>
+            <option value="in an alpine meadow">Alpine meadow</option>
+            <option value="on a snowy mountain ridge">Snowy mountain</option>
+            <option value="in a snowy village street">Snowy village</option>
+            <option value="underwater in a coral reef environment">Underwater coral reef</option>
+            <option value="inside an ancient stone temple">Ancient temple</option>
+            <option value="in a fantasy realm">Fantasy realm</option>
+            <option value="above the clouds in a celestial atmosphere">Celestial cloudscape</option>
+            <option value="in outer space">Outer space</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Time of Day</div>
+          <select id="sTime" onchange="build()">
+            <option value="">— Select —</option>
+            <option value="at dawn">Dawn</option>
+            <option value="in the early morning">Early morning</option>
+            <option value="at midday">Midday</option>
+            <option value="at golden hour">Golden hour</option>
+            <option value="at sunset">Sunset</option>
+            <option value="at blue hour">Blue hour</option>
+            <option value="at twilight">Twilight</option>
+            <option value="at night">Night</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Weather</div>
+          <select id="sWeather" onchange="build()">
+            <option value="">— Select —</option>
+            <option value="under a clear sky">Clear</option>
+            <option value="under soft overcast skies">Overcast</option>
+            <option value="in light rain">Light rain</option>
+            <option value="during a thunderstorm">Thunderstorm</option>
+            <option value="in misty air">Misty</option>
+            <option value="in dense fog">Foggy</option>
+            <option value="during snowfall">Snowfall</option>
+            <option value="with heat haze in the air">Heat haze</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <div class="field-label">Atmosphere / Mood</div>
+          <select id="sMood" onchange="build()">
+            <option value="">— Select —</option>
+            <option value="with a bright uplifting mood">Bright / uplifting</option>
+            <option value="with a soft romantic atmosphere">Soft / romantic</option>
+            <option value="with a peaceful meditative atmosphere">Peaceful / meditative</option>
+            <option value="with a nostalgic mood">Nostalgic</option>
+            <option value="with a dramatic high-tension atmosphere">Dramatic</option>
+            <option value="with a mysterious cinematic atmosphere">Mysterious</option>
+            <option value="with a luxurious polished mood">Luxurious</option>
+            <option value="with a playful energetic mood">Playful</option>
+            <option value="with a melancholic atmosphere">Melancholic</option>
+          </select>
+        </div>
+      </div>
+      <div class="field-group" style="margin-top:12px">
+        <div class="field-label">Background / Set Details</div>
+        <textarea id="sDetails" placeholder="e.g. subtle fog drifting through pine trees, soft reflections on wet pavement, monolithic stone blocks, folded paper backdrop, floating petals..." oninput="build()"></textarea>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-num n6">⑥</div>
+        <div>
+          <div class="panel-title">Camera & Composition</div>
+          <div class="panel-sub">Các term phổ biến để điều khiển framing, lens, angle và layout.</div>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field-group">
+            <div class="field-label">Shot Type</div>
+            <select id="camShot" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="an extreme close-up">Extreme close-up</option>
+              <option value="a close-up shot">Close-up</option>
+              <option value="a medium close-up shot">Medium close-up</option>
+              <option value="a medium shot">Medium shot</option>
+              <option value="a medium full shot">Medium full shot</option>
+              <option value="a full-body shot">Full-body shot</option>
+              <option value="a wide shot">Wide shot</option>
+              <option value="an extreme wide shot">Extreme wide shot</option>
+              <option value="a macro shot">Macro shot</option>
+              <option value="a top-down shot">Top-down</option>
+              <option value="an over-the-shoulder shot">Over-the-shoulder</option>
+              <option value="a point-of-view shot">Point of view</option>
+              <option value="a profile shot">Profile shot</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Angle / Viewpoint</div>
+            <select id="camAngle" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="from an eye-level perspective">Eye level</option>
+              <option value="from a low-angle perspective">Low angle</option>
+              <option value="from a high-angle perspective">High angle</option>
+              <option value="from a bird's-eye view">Bird's-eye view</option>
+              <option value="with a Dutch angle">Dutch angle</option>
+              <option value="from a straight-on front view">Straight-on front view</option>
+              <option value="from a side profile perspective">Side profile</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Lens</div>
+            <select id="camLens" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="captured with a 24mm wide-angle lens feel">24mm wide-angle</option>
+              <option value="captured with a 35mm lens feel">35mm</option>
+              <option value="captured with a 50mm lens feel">50mm</option>
+              <option value="captured with an 85mm portrait lens feel">85mm portrait</option>
+              <option value="captured with a telephoto compression look">Telephoto compression</option>
+              <option value="captured with an anamorphic lens look">Anamorphic</option>
+              <option value="captured with a tilt-shift lens look">Tilt-shift</option>
+              <option value="captured with a fisheye lens look">Fisheye</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <div class="field-group">
+            <div class="field-label">Composition</div>
+            <select id="camComp" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="with centered composition">Centered composition</option>
+              <option value="with symmetrical composition">Symmetrical composition</option>
+              <option value="with asymmetrical composition">Asymmetrical composition</option>
+              <option value="with strong negative space">Negative space</option>
+              <option value="following the rule of thirds">Rule of thirds</option>
+              <option value="with layered foreground and background depth">Layered depth</option>
+              <option value="with the subject isolated against the background">Subject isolation</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Focus / Camera Style</div>
+            <select id="camStyle" onchange="build()">
+              <option value="">— Select —</option>
+              <option value="with shallow depth of field">Shallow depth of field</option>
+              <option value="with deep depth of field">Deep depth of field</option>
+              <option value="with a soft bokeh background">Bokeh background</option>
+              <option value="with crisp studio sharpness">Studio sharpness</option>
+              <option value="with cinematic lens flare">Lens flare</option>
+              <option value="with motion blur accents">Motion blur accents</option>
+            </select>
+          </div>
+          <div class="field-group">
+            <div class="field-label">Layout Note</div>
+            <input id="camLayout" type="text" placeholder="e.g. subject centered, logo top-right, negative space on the left..." oninput="build()"/>
+          </div>
+        </div>
+      </div>
+    </div>
+
   <div class="preview-wrap">
     <div class="preview-top">
       <div class="preview-title">Output Prompt</div>
       <div class="char-count" id="charcount">0 chars</div>
     </div>
-    <div class="preview-text" id="preview"><span class="preview-empty">Chọn thông số bên trên hoặc chọn Game Preset để bắt đầu...</span></div>
+    <textarea id="preview" rows="7" placeholder="Chọn thông số bên trên để bắt đầu..." oninput="updateCount()"></textarea>
   </div>
 
-  <!-- AI Enhanced result -->
-  <div class="ai-box" id="aiBox">
-    <div class="ai-box-top">
-      <div class="ai-label"><span class="ai-star">✦</span> AI Enhanced</div>
-      <button class="ai-copy-btn" onclick="copyAI()">Copy</button>
-    </div>
-    <div class="ai-text" id="aiText"></div>
-  </div>
-
-  <!-- Actions -->
   <div class="actions">
     <button class="btn btn-copy" id="copybtn" onclick="copyPrompt()">Copy</button>
-    <button class="btn btn-ai" id="aibtn" onclick="enhanceWithAI()">✦ AI Enhance</button>
     <button class="btn btn-save" onclick="savePrompt()">Save</button>
     <button class="btn btn-reset" onclick="resetAll()">Reset</button>
   </div>
 
-  <!-- History -->
   <div class="history-wrap">
     <div class="history-header">
       <div class="history-title">Saved Prompts</div>
@@ -264,207 +623,37 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
     <div id="hist-list"><div class="hist-empty">Chưa có prompt được lưu.</div></div>
   </div>
 
-  <!-- API Status -->
-  <div style="margin-top:24px;background:var(--card);border-radius:18px;padding:16px 20px;border:2.5px solid #D8EEF1">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)">Gemini API Status</div>
-      <button onclick="testConnection()" id="testbtn" style="font-family:'Nunito',sans-serif;font-size:12px;font-weight:800;padding:6px 16px;border-radius:50px;border:2px solid var(--downy);color:var(--downy);background:#fff;cursor:pointer">Test Connection</button>
-    </div>
-    <div id="api-status" style="display:flex;align-items:center;gap:8px">
-      <div id="status-dot" style="width:10px;height:10px;border-radius:50%;background:#D8EEF1;flex-shrink:0"></div>
-      <div id="status-text" style="font-size:13px;font-weight:700;color:var(--muted)">Chưa kiểm tra — bấm Test Connection</div>
-    </div>
-  </div>
-
-  <div class="footer">SUN.STUDIO Prompt Builder · Imagen 4 · Gemini 2.5 Flash</div>
+  <div class="footer">SUN.STUDIO · Prompt Builder</div>
 </div>
 
 <script>
-const GEMINI_KEY = 'AIzaSyAFiYEmKvoCz6BjAJP5vwJEp5401O1P3SU';
-const STORAGE_KEY = 'sunstudio_prompts_v2';
+const STORAGE_KEY = 'sunstudio_prompts_v5';
 let saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-let lastAIText = '';
-
-const presets = {
-  desert:{s1a:'Wide shot',s1b:'16:9 aspect ratio',s1c:'shallow depth of field',s2a:'young Southeast Asian woman in her mid-20s',s2b:'with a determined focused expression',s2c:'worn linen outfit in sandy beige, holding a worn map, dust on her boots',s3a:'on a golden sand desert dune at dusk',s3b:'ancient ruins visible in the distance, sparse dry shrubs',s4a:'warm golden hour sunlight from the left',s4b:'warm amber and terracotta tones',s4c:'cinematic mood'},
-  garden:{s1a:'Medium shot',s1b:'4:5 aspect ratio',s1c:'',s2a:'young Southeast Asian woman in her mid-20s',s2b:'with a joyful beaming expression',s2c:'floral dress in soft green, kneeling, hands in soil, garden gloves',s3a:'in a sunlit overgrown garden with wildflowers',s3b:'old stone path, blooming roses along fence, morning dew',s4a:'soft diffused overcast daylight',s4b:'soft pastel pink and cream',s4c:'dreamy mood'},
-  puppy:{s1a:'Close-up shot',s1b:'1:1 aspect ratio',s1c:'',s2a:'a child around 8 years old',s2b:'with a tender loving expression',s2c:'yellow raincoat, holding a small muddy puppy wrapped in a towel',s3a:'on a calm beach at low tide',s3b:'tide pools, misty horizon, golden sand',s4a:'warm golden hour sunlight from the left',s4b:'warm amber and terracotta tones',s4c:'intimate mood'},
-  proposal:{s1a:'Over-the-shoulder shot',s1b:'16:9 aspect ratio',s1c:'bokeh background',s2a:'young Southeast Asian man in his mid-20s',s2b:'with a tender loving expression',s2c:'navy suit, one knee down, holding open a small velvet ring box',s3a:'on a city rooftop at sunset',s3b:'string lights, flower arrangements, city skyline glowing',s4a:'warm golden hour sunlight from the left',s4b:'warm amber and terracotta tones',s4c:'cinematic mood'}
-};
-
-function setVal(id,v){const el=document.getElementById(id);if(el)el.value=v;}
-function val(id){return(document.getElementById(id)||{}).value||'';}
-
-function loadPreset(name){
-  const p=presets[name];
-  Object.keys(p).forEach(k=>setVal(k,p[k]));
-  hideAI();
-  build();
-}
-
-function build(){
-  const s1=[val('s1a'),val('s1b'),val('s1c')].filter(Boolean).join(', ');
-  const s2=[val('s2a'),val('s2b'),val('s2c')].filter(Boolean).join(', ');
-  const s3=[val('s3a'),val('s3b')].filter(Boolean).join(', ');
-  const s4=[val('s4a'),val('s4b'),val('s4c')].filter(Boolean).join(', ');
-  const out=document.getElementById('preview');
-  if(!s1&&!s2&&!s3&&!s4){
-    out.innerHTML='<span class="preview-empty">Chọn thông số bên trên hoặc chọn Game Preset để bắt đầu...</span>';
-    document.getElementById('charcount').textContent='0 chars';
-    return;
-  }
-  let html='';
-  if(s1) html+=`<span class="tag t1">① Shot</span>${s1}. `;
-  if(s2) html+=`<span class="tag t2">② Char</span>${s2}. `;
-  if(s3) html+=`<span class="tag t3">③ Set</span>${s3}. `;
-  if(s4) html+=`<span class="tag t4">④ Light</span>${s4}.`;
-  out.innerHTML=html;
-  document.getElementById('charcount').textContent=getPlain().length+' chars';
-}
-
-function getPlain(){
-  return [[val('s1a'),val('s1b'),val('s1c')],[val('s2a'),val('s2b'),val('s2c')],[val('s3a'),val('s3b')],[val('s4a'),val('s4b'),val('s4c')]].map(a=>a.filter(Boolean).join(', ')).filter(Boolean).join('. ')+'.';
-}
-
-function hideAI(){
-  document.getElementById('aiBox').classList.remove('visible');
-  lastAIText='';
-}
-
-async function enhanceWithAI(){
-  const raw=getPlain();
-  if(raw==='.'||raw.length<10){alert('Hãy điền thông tin vào các slot trước!');return;}
-  const btn=document.getElementById('aibtn');
-  btn.disabled=true;
-  btn.innerHTML='<span class="spinner"></span>Enhancing...';
-  hideAI();
-  const fullPrompt=`You are a creative director writing image generation prompts. Take the input below and rewrite it as a single fluent, vivid, cinematic English sentence for Imagen 4. Include all details: shot type, character description, setting, and lighting/mood. Do not truncate. Output the prompt sentence only, nothing else.
-
-Input: ${raw}
-
-Output (one complete sentence):`;
-
-  try{
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_KEY}`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        contents:[{parts:[{text:fullPrompt}]}],
-        generationConfig:{temperature:0.7,maxOutputTokens:2048},
-      })
-    });
-    const data=await res.json();
-    if(data.candidates&&data.candidates[0]){
-      const parts=data.candidates[0].content.parts||[];
-      // Skip thinking blocks (thought===true), collect all real text parts
-      const textParts=parts.filter(p=>p.thought!==true&&typeof p.text==='string');
-      const fullText=textParts.map(p=>p.text).join('').trim();
-      if(fullText){
-        lastAIText=fullText;
-        document.getElementById('aiText').textContent=lastAIText;
-        document.getElementById('aiBox').classList.add('visible');
-      } else {
-        alert('Gemini trả về rỗng. Raw: '+JSON.stringify(parts));
-      }
-    } else {
-      alert('Gemini API error: '+(data.error&&data.error.message||'Unknown error'));
-    }
-  } catch(e){
-    alert('Network error: '+e.message);
-  }
-  btn.disabled=false;
-  btn.innerHTML='✦ AI Enhance';
-}
-
-function copyPrompt(){
-  const t=getPlain();if(t==='.')return;
-  navigator.clipboard.writeText(t).then(()=>flashCopy('copybtn','Copied!'));
-}
-
-function copyAI(){
-  if(!lastAIText)return;
-  navigator.clipboard.writeText(lastAIText).then(()=>{
-    const b=document.querySelector('.ai-copy-btn');
-    b.textContent='Copied! ✓';
-    setTimeout(()=>b.textContent='Copy',1800);
-  });
-}
-
-function flashCopy(id,msg){
-  const b=document.getElementById(id);
-  const orig=b.textContent;
-  b.textContent=msg;b.classList.add('copied');
-  setTimeout(()=>{b.textContent=orig;b.classList.remove('copied');},2000);
-}
-
-function savePrompt(){
-  const t=getPlain();if(t==='.')return;
-  const isAI=!!lastAIText;
-  const text=isAI?lastAIText:t;
-  saved.unshift({text,ai:isAI,time:new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})});
-  if(saved.length>10)saved.pop();
-  localStorage.setItem(STORAGE_KEY,JSON.stringify(saved));
-  renderHistory();
-  flashCopy('copybtn','Saved!');
-}
-
-function clearHistory(){
-  saved=[];localStorage.removeItem(STORAGE_KEY);renderHistory();
-}
-
-function renderHistory(){
-  const el=document.getElementById('hist-list');
-  if(!saved.length){el.innerHTML='<div class="hist-empty">Chưa có prompt được lưu.</div>';return;}
-  el.innerHTML=saved.map((s,i)=>`
-    <div class="hist-item" onclick="copyHist(${i})">
-      <div class="hist-bullet ${s.ai?'hb-ai':'hb-normal'}"></div>
-      <div class="hist-text">${s.text}</div>
-      ${s.ai?'<div class="hist-ai-badge">AI</div>':''}
-      <div class="hist-meta">${s.time} · copy</div>
-    </div>`).join('');
-}
-
-function copyHist(i){
-  navigator.clipboard.writeText(saved[i].text).then(()=>flashCopy('copybtn','Copied!'));
-}
-
-function resetAll(){
-  ['s1a','s1b','s1c','s2a','s2b','s2c','s3a','s3b','s4a','s4b','s4c'].forEach(id=>{
-    const el=document.getElementById(id);if(el)el.value='';
-  });
-  hideAI();build();
-}
-
-renderHistory();
-
-async function testConnection(){
-  const btn=document.getElementById('testbtn');
-  const dot=document.getElementById('status-dot');
-  const txt=document.getElementById('status-text');
-  btn.textContent='Testing...';btn.disabled=true;
-  dot.style.background='#FFB356';
-  txt.style.color='var(--muted)';
-  txt.textContent='Đang kiểm tra kết nối...';
-  try{
-    // GET model info — no content generation, 0 tokens consumed
-    const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash?key=${GEMINI_KEY}`);
-    const data=await res.json();
-    if(data.name){
-      dot.style.background='#75D06A';
-      txt.style.color='#4BAD46';
-      txt.textContent='✓ Kết nối thành công — Gemini 2.5 Flash sẵn sàng (0 token used)';
-    } else if(data.error){
-      dot.style.background='#FF8B8B';
-      txt.style.color='var(--mona)';
-      txt.textContent='✗ Lỗi: '+data.error.message;
-    }
-  } catch(e){
-    dot.style.background='#FF8B8B';
-    txt.style.color='var(--mona)';
-    txt.textContent='✗ Không kết nối được — kiểm tra mạng';
-  }
-  btn.textContent='Test Connection';btn.disabled=false;
-}
+const FIELDS = ['subjectType','cGender','cAge','cSkin','cFeature','cEmotion','cAction','cWardrobe','aType','aBreed','aStage','aCoat','aEmotion','aAction','aStyle','oCategory','oName','oMaterial','oFinish','oColor','oPresentation','oText','oDetails','sEnv','sTime','sWeather','sMood','sDetails','camShot','camAngle','camLens','camComp','camStyle','camLayout'];
+const defaults = {subjectType:'character'};
+function val(id){const el=document.getElementById(id);return el?el.value.trim():'';}
+function setVal(id,value){const el=document.getElementById(id);if(el) el.value=value||'';}
+function formatQuotedText(text){return text?`with the exact text "${text}" rendered clearly`:'';}
+function joinParts(parts){return parts.filter(Boolean).join(', ');}
+function buildCharacter(){return joinParts([val('cGender'),val('cAge'),val('cSkin'),val('cFeature'),val('cEmotion'),val('cAction'),val('cWardrobe')]);}
+function buildAnimal(){return joinParts([val('aType'),val('aBreed'),val('aStage'),val('aCoat'),val('aEmotion'),val('aAction'),val('aStyle')]);}
+function buildObject(){return joinParts([val('oCategory'),val('oName'),val('oMaterial'),val('oFinish'),val('oColor')?`in ${val('oColor')}`:'',val('oPresentation'),val('oDetails'),formatQuotedText(val('oText'))]);}
+function buildSubjectSegment(){const type=val('subjectType');const character=buildCharacter();const animal=buildAnimal();const object=buildObject();if(type==='animal') return animal;if(type==='object') return object;return character;}
+function buildSettingSegment(){return joinParts([val('sEnv'),val('sTime'),val('sWeather'),val('sMood'),val('sDetails')]);}
+function buildCameraSegment(){return joinParts([val('camShot'),val('camAngle'),val('camLens'),val('camComp'),val('camStyle'),val('camLayout')]);}
+function getPlain(){const subject=buildSubjectSegment();const setting=buildSettingSegment();const camera=buildCameraSegment();const parts=['Create an image'];if(subject) parts.push(`featuring ${subject}`);if(setting) parts.push(setting);if(camera) parts.push(camera);return parts.filter(Boolean).join(', ')+'.';}
+function build(){const preview=document.getElementById('preview');const plain=getPlain();preview.value=plain==='.'?'':plain;updateCount();}
+function updateCount(){const t=document.getElementById('preview').value||'';document.getElementById('charcount').textContent=t.length?`${t.length} chars`:'0 chars';}
+function updateSectionVisibility(){const type=val('subjectType')||'character';const showCharacter=type==='character';const showAnimal=type==='animal';const showObject=type==='object';document.getElementById('characterPanel').classList.toggle('hidden',!showCharacter);document.getElementById('animalPanel').classList.toggle('hidden',!showAnimal);document.getElementById('objectPanel').classList.toggle('hidden',!showObject);}
+function copyPrompt(){const t=document.getElementById('preview').value.trim();if(!t) return;navigator.clipboard.writeText(t).then(()=>flashButton('copybtn','Copied!'));}
+function flashButton(id,msg){const b=document.getElementById(id);const orig=b.textContent;b.textContent=msg;b.classList.add('copied');setTimeout(()=>{b.textContent=orig;b.classList.remove('copied');},1600);}
+function savePrompt(){const t=document.getElementById('preview').value.trim();if(!t) return;saved.unshift({text:t,time:new Date().toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})});if(saved.length>12) saved.pop();localStorage.setItem(STORAGE_KEY,JSON.stringify(saved));renderHistory();flashButton('copybtn','Saved!');}
+function clearHistory(){saved=[];localStorage.removeItem(STORAGE_KEY);renderHistory();}
+function escapeHtml(str){return (str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function renderHistory(){const el=document.getElementById('hist-list');if(!saved.length){el.innerHTML='<div class="hist-empty">Chưa có prompt được lưu.</div>';return;}el.innerHTML=saved.map((s,i)=>`<div class="hist-item" onclick="copyHist(${i})"><div class="hist-bullet hb-normal"></div><div class="hist-text">${escapeHtml(s.text)}</div><div class="hist-meta">${escapeHtml(s.time)} · copy</div></div>`).join('');}
+function copyHist(i){navigator.clipboard.writeText(saved[i].text).then(()=>flashButton('copybtn','Copied!'));}
+function resetAll(shouldBuild=true){FIELDS.forEach(id=>setVal(id,''));Object.keys(defaults).forEach(id=>setVal(id,defaults[id]));updateSectionVisibility();if(shouldBuild) build();}
+renderHistory();resetAll();build();
 </script>
 </body>
 </html>
